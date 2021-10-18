@@ -1,16 +1,16 @@
 package org.example
 
-import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.types._
+import org.apache.spark.sql.{Row, SparkSession}
 
 import java.sql.Date
 
-object Demo {
+object DemoDB {
   def main(args: Array[String]) {
-    val spark = SparkSession.builder.master("local").getOrCreate()
+//    val spark = SparkSession.builder.master("local").getOrCreate()
+    //val goodSparkContext = SparkContext.getOrCreate()
+    val spark = SparkSession.builder().getOrCreate()
 
-    //    val goodSparkContext = SparkContext.getOrCreate()
-//    val spark = SparkSession.builder().getOrCreate()
 
     // Create a Spark DataFrame consisting of high and low temperatures
     // by airport code and date.
@@ -41,14 +41,14 @@ object Demo {
     // If the table already exists from a previous run,
     // delete it first.
     spark.sql("USE default")
-    spark.sql("DROP TABLE IF EXISTS demo_temps_table1")
-    temps.write.mode(saveMode = "overwrite").saveAsTable("demo_temps_table1")
+    spark.sql("DROP TABLE IF EXISTS demo_temps_table2")
+    temps.write.saveAsTable("demo_temps_table2")
 
     // Query the table on the Databricks cluster, returning rows
     // where the airport code is not BLI and the date is later
     // than 2021-04-01. Group the results and order by high
     // temperature in descending order.
-    val df_temps = spark.sql("SELECT * FROM demo_temps_table1 " +
+    val df_temps = spark.sql("SELECT * FROM demo_temps_table2 " +
       "WHERE AirportCode != 'BLI' AND Date > '2021-04-01' " +
       "GROUP BY AirportCode, Date, TempHighF, TempLowF " +
       "ORDER BY TempHighF DESC")
@@ -67,5 +67,7 @@ object Demo {
 
     // Clean up by deleting the table from the Databricks cluster.
 //    spark.sql("DROP TABLE demo_temps_table1")
+
+
   }
 }
